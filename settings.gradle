@@ -1,3 +1,5 @@
+include ':core'
+include ':feature-landing'
 include ':components'
 include ':domain'
 include ':data'
