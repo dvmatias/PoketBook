@@ -1,2 +1,5 @@
+include ':components'
+include ':domain'
+include ':data'
 include ':app'
 rootProject.name = "PoketBook"
