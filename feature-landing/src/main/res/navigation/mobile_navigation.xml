@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_open_books">
+    app:startDestination="@+id/nav_current_reading">
 
     <fragment
-        android:id="@+id/nav_open_books"
-        android:name="com.cmdv.feature_landing.ui.ui.home.OpenBooksFragment"
+        android:id="@+id/nav_current_reading"
+        android:name="com.cmdv.feature_landing.ui.ui.home.CurrentReadingFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_open_books" />
+        tools:layout="@layout/fragment_current_reading" />
 
     <fragment
         android:id="@+id/nav_gallery"

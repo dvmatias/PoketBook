@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#15222d</color>
-    <color name="colorPrimaryDark">#15222d</color>
+    <color name="colorPrimary">#102027</color>
+    <color name="colorPrimaryDark">#102027</color>
     <color name="colorPrimaryLight">#677683</color>
     <color name="colorAccent">#ffa000</color>
-    <color name="colorLandingActivityBackground">#3c4a56</color>
+    <color name="colorLandingActivityBackground">#000a12</color>
 </resources>

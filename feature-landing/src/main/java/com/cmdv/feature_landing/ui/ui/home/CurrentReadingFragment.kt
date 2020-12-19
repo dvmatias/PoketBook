@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.cmdv.feature_landing.R
 
-class OpenBooksFragment : Fragment() {
+class CurrentReadingFragment : Fragment() {
 
     private val viewModel: OpenBooksViewModel by viewModels()
 
@@ -17,7 +17,7 @@ class OpenBooksFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_open_books, container, false)
+        val root = inflater.inflate(R.layout.fragment_current_reading, container, false)
 
         return root
     }
