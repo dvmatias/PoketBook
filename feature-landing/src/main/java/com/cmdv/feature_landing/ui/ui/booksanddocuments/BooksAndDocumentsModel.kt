@@ -1,13 +1,13 @@
-package com.cmdv.feature_landing.ui.ui.home
+package com.cmdv.feature_landing.ui.ui.booksanddocuments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class OpenBooksViewModel : ViewModel() {
+class BooksAndDocumentsModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+        value = "This is gallery Fragment"
     }
     val text: LiveData<String> = _text
 }

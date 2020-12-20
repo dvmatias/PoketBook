@@ -13,7 +13,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.cmdv.feature_landing.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LandingActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -34,7 +36,7 @@ class LandingActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_current_reading, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_books_and_documents, R.id.nav_current_reading, R.id.nav_slideshow
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

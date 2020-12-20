@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_current_reading">
+    app:startDestination="@+id/nav_books_and_documents">
+
+    <fragment
+        android:id="@+id/nav_books_and_documents"
+        android:name="com.cmdv.feature_landing.ui.ui.booksanddocuments.BooksAndDocumentsFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_books_and_documents" />
 
     <fragment
         android:id="@+id/nav_current_reading"
-        android:name="com.cmdv.feature_landing.ui.ui.home.CurrentReadingFragment"
+        android:name="com.cmdv.feature_landing.ui.ui.currentreading.CurrentReadingFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_current_reading" />
-
-    <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.cmdv.feature_landing.ui.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
