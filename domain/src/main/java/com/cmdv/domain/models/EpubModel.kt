@@ -1,5 +1,5 @@
 package com.cmdv.domain.models
 
-data class BookModel(
+data class EpubModel(
     val a: Any
 )

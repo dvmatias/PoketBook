@@ -3,10 +3,7 @@ package com.cmdv.core.managers
 import android.sax.Element
 import android.sax.RootElement
 import android.util.Log
-import com.cmdv.data.repositories.FilesRepositoryImpl
-import com.cmdv.domain.managers.EpubBookManager
-import com.cmdv.domain.models.BookModel
-import com.cmdv.domain.repositories.FilesRepository
+import com.cmdv.domain.models.EpubModel
 import org.xml.sax.ContentHandler
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
@@ -17,21 +14,24 @@ import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
 
 
-class EpubBookManagerImpl(
+class EpubBookManager(
     private val zipManager: ZipManager
-) : EpubBookManager {
+) {
 
-    private val TAG: String = EpubBookManagerImpl::class.java.simpleName
+    private val TAG: String = EpubBookManager::class.java.simpleName
 
     private val XML_NAMESPACE_CONTAINER = "urn:oasis:names:tc:opendocument:xmlns:container"
+    private val epubBooks: ArrayList<EpubModel> = arrayListOf()
     private var mOpfFileName: String? = null
 
-    override fun getEpubBooks(): List<BookModel>? {
-        
-        return null
+    fun getEpubBooks(epubFileNames: List<String>): List<EpubModel> {
+        epubFileNames.forEach { fileName ->
+            epubBooks.add(getEpubBook(fileName))
+        }
+        return epubBooks
     }
 
-    override fun getEpubBook(filePath: String?): BookModel {
+    private fun getEpubBook(filePath: String?): EpubModel {
         val contentHandler: ContentHandler? = constructContainerFileParser()
         val inputStream: InputStream? = zipManager.getEpubZipFileInputStream(filePath)
         inputStream?.let {
@@ -56,7 +56,7 @@ class EpubBookManagerImpl(
             }
         }
 
-        return BookModel("") // TODO
+        return EpubModel("") // TODO
     }
 
     private fun constructContainerFileParser(): ContentHandler? {

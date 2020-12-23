@@ -22,7 +22,7 @@ class BooksAndDocumentsFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_books_and_documents, container, false)
         val textView: TextView = root.findViewById(R.id.text_gallery)
         viewModel.allFiles.observe(viewLifecycleOwner, Observer {
-            viewModel.fetchEpubBooks(it)
+//            viewModel.fetchEpubBooks(it)
         })
         return root
     }
