@@ -1,6 +1,7 @@
 package com.cmdv.feature_landing.ui.ui.booksanddocuments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,7 @@ class BooksAndDocumentsFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_books_and_documents, container, false)
         val textView: TextView = root.findViewById(R.id.text_gallery)
         viewModel.allFiles.observe(viewLifecycleOwner, Observer {
-//            viewModel.fetchEpubBooks(it)
+            Log.d("asda", "asdasd")
         })
         return root
     }

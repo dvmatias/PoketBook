@@ -1,9 +1,9 @@
 package com.cmdv.domain.managers
 
-import com.cmdv.domain.models.EpubModel
+import com.cmdv.domain.models.epub.EpubModel
 
 interface EpubFilesManager {
 
-    fun getEpubFilesManager(): List<EpubModel>?
+    fun getEpubFiles(): List<EpubModel>
 
 }

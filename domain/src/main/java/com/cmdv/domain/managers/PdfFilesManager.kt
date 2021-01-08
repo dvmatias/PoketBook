@@ -4,6 +4,6 @@ import com.cmdv.domain.models.PdfModel
 
 interface PdfFilesManager {
 
-    fun getPdfFilesManager(): List<PdfModel>?
+    fun getPdfFiles(): List<PdfModel>
 
 }
