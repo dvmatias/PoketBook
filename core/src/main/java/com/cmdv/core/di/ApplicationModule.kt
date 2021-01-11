@@ -1,6 +1,6 @@
 package com.cmdv.core.di
 
-import com.cmdv.core.utils.ZipManager
+import com.cmdv.core.managers.ZipManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
