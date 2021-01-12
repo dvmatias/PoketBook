@@ -6,10 +6,7 @@ import android.sax.RootElement
 import android.util.Log
 import com.cmdv.domain.HrefResolver
 import com.cmdv.domain.XmlUtil
-import com.cmdv.domain.models.epub.EpubModel
-import com.cmdv.domain.models.epub.Manifest
-import com.cmdv.domain.models.epub.ManifestItem
-import com.cmdv.domain.models.epub.TableOfContents
+import com.cmdv.domain.models.epub.*
 import org.xml.sax.ContentHandler
 import java.io.File
 import java.io.IOException
@@ -20,6 +17,7 @@ import java.util.zip.ZipFile
 
 class EpubFileParser : FileParser {
 
+    @Suppress("PrivatePropertyName")
     private val TAG = EpubFileParser::class.java.simpleName
 
     companion object {
@@ -47,16 +45,24 @@ class EpubFileParser : FileParser {
 
     // Zip file
     private lateinit var zipFile: ZipFile
+
     // OPF file name
     private var opfFileName: String? = null
+
     // TOC ID (table of content)
     private var tocID: String? = null
+
     // The resources that are in the spine element of the metadata.
     private val spine: ArrayList<ManifestItem> = arrayListOf()
+
     // The manifest entry in the metadata.
     private val manifest: Manifest = Manifest()
+
     // The Table of Contents in the metadata.
     private val mTableOfContents: TableOfContents = TableOfContents()
+
+    // The Table of Contents in the metadata.
+    private var metadataModel: MetadataModel? = null
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> parse(fileName: String): T? {
@@ -68,7 +74,10 @@ class EpubFileParser : FileParser {
             // get the "container" file, this tells us where the ".opf" file is
             parseXmlResource(XML_PATH_CONTAINER, constructContainerFileParser())
 
-            opfFileName?.let { parseXmlResource(it, constructOpfFileParser()) }
+            opfFileName?.let {
+                parseXmlResource(it, constructOpfFileParser())
+                metadataModel = MetadataParser().parse(fetchFromZip(it))
+            }
 
             if (tocID != null) {
                 val tocManifestItem = manifest.findById(tocID!!)
@@ -83,7 +92,7 @@ class EpubFileParser : FileParser {
         }
 
         return if (opfFileName != null && tocID != null) {
-            EpubModel(fileName, filePath, opfFileName!!, tocID!!, spine, manifest, mTableOfContents) as T
+            EpubModel(fileName, filePath, opfFileName!!, tocID!!, metadataModel!!, spine, manifest, mTableOfContents) as T
         } else {
             null
         }

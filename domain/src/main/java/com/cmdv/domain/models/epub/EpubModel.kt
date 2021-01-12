@@ -5,6 +5,7 @@ data class EpubModel(
     val filePath: String,
     val opfFileName: String,
     val tocID: String,
+    val metadata: MetadataModel,
     val spine: ArrayList<ManifestItem>,
     val manifest: Manifest,
     val tableOfContents: TableOfContents
