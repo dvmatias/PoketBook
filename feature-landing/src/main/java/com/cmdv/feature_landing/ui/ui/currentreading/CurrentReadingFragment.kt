@@ -9,17 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.cmdv.core.bases.BaseFragment
-import com.cmdv.core.managers.ZipManager
 import com.cmdv.feature_landing.R
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CurrentReadingFragment : BaseFragment<OpenBooksViewModel>() {
-
-    @Inject
-    lateinit var zipManager: ZipManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +36,7 @@ class CurrentReadingFragment : BaseFragment<OpenBooksViewModel>() {
                 val file = File(path, "El oro del depredador - Philip Reeve.epub")
                 val parcelFileDescriptor = it.contentResolver.openFileDescriptor(Uri.fromFile(File("/storage/emulated/0/Download/El oro del depredador - Philip Reeve.zip")), "r", null)
                 if (file.exists()) {
-//                    val something = zipManager.fetchFromZip(file.absolutePath)
+
                 }
             }
         }

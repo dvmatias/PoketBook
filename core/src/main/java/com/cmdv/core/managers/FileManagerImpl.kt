@@ -15,7 +15,6 @@ private const val FILE_EXTENSION_PDF = ".*pdf$"
 
 class FileManagerImpl : FileManager {
 
-//    private var epubBookManager: EpubBookManager = EpubBookManager(ZipManager())
     private var fileNames: List<String> = listOf()
     private val fileParserFactory: FileParserFactory = FileParserFactory()
     private lateinit var parser: FileParser
