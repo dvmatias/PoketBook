@@ -6,6 +6,7 @@ import android.sax.RootElement
 import android.util.Log
 import com.cmdv.domain.HrefResolver
 import com.cmdv.domain.XmlUtil
+import com.cmdv.domain.models.DocumentType
 import com.cmdv.domain.models.epub.*
 import org.xml.sax.ContentHandler
 import java.io.File
@@ -35,6 +36,7 @@ class EpubFileParser : FileParser {
         // the .opf XML
         private const val XML_NAMESPACE_PACKAGE = "http://www.idpf.org/2007/opf"
         private const val XML_ELEMENT_PACKAGE = "package"
+        private const val XML_ATTRIBUTE_VERSION = "version"
         private const val XML_ELEMENT_MANIFEST = "manifest"
         private const val XML_ELEMENT_MANIFEST_ITEM = "item"
         private const val XML_ELEMENT_SPINE = "spine"
@@ -43,26 +45,15 @@ class EpubFileParser : FileParser {
         private const val XML_ATTRIBUTE_ID_REF = "idref"
     }
 
-    // Zip file
     private lateinit var zipFile: ZipFile
-
-    // OPF file name
+    private lateinit var epubVersion: String
     private var opfFileName: String? = null
-
-    // TOC ID (table of content)
     private var tocID: String? = null
-
-    // The resources that are in the spine element of the metadata.
     private val spine: ArrayList<ManifestItem> = arrayListOf()
-
-    // The manifest entry in the metadata.
     private val manifest: Manifest = Manifest()
-
-    // The Table of Contents in the metadata.
-    private val mTableOfContents: TableOfContents = TableOfContents()
-
-    // The Table of Contents in the metadata.
+    private val tableOfContents: TableOfContents = TableOfContents()
     private var metadataModel: MetadataModel? = null
+    private var fileSizeKb: Long = 0
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> parse(fileName: String): T? {
@@ -74,25 +65,16 @@ class EpubFileParser : FileParser {
             // get the "container" file, this tells us where the ".opf" file is
             parseXmlResource(XML_PATH_CONTAINER, constructContainerFileParser())
 
-            opfFileName?.let {
-                parseXmlResource(it, constructOpfFileParser())
-                metadataModel = MetadataParser().parse(fetchFromZip(it))
-            }
-
-            if (tocID != null) {
-                val tocManifestItem = manifest.findById(tocID!!)
-                if (tocManifestItem != null) {
-                    val tocFileName = tocManifestItem.href
-                    val resolver = HrefResolver(tocFileName)
-                    parseXmlResource(tocFileName, mTableOfContents.constructTocFileParser(resolver))
-                }
-            }
+            setupOpfFile()
+            setupMetadata()
+            setupTableOfContent()
+            setupFileSizeInKB(filePath)
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
         return if (opfFileName != null && tocID != null) {
-            EpubModel(fileName, filePath, opfFileName!!, tocID!!, metadataModel!!, spine, manifest, mTableOfContents) as T
+            EpubModel(epubVersion, fileName, filePath, DocumentType.EPUB, fileSizeKb, opfFileName!!, tocID!!, metadataModel!!, spine, manifest, tableOfContents) as T
         } else {
             null
         }
@@ -103,6 +85,33 @@ class EpubFileParser : FileParser {
         inputStream?.let {
             XmlUtil.parseXmlResource(inputStream, handler, null)
         }
+    }
+
+    private fun setupOpfFile() {
+        opfFileName?.let {
+            parseXmlResource(it, constructOpfFileParser())
+        }
+    }
+
+    private fun setupTableOfContent() {
+        tocID?.let { _tocID ->
+            val tocManifestItem = manifest.findById(_tocID)
+            tocManifestItem?.let { _tocManifestItem ->
+                val tocFileName = _tocManifestItem.href
+                val resolver = HrefResolver(tocFileName)
+                parseXmlResource(tocFileName, tableOfContents.constructTocFileParser(resolver))
+            }
+        }
+    }
+
+    private fun setupMetadata() {
+        opfFileName?.let {
+            metadataModel = MetadataParser().parse(epubVersion, fetchFromZip(it))
+        }
+    }
+
+    private fun setupFileSizeInKB(filePath: String) {
+        fileSizeKb = (File(filePath).length() / 1024)
     }
 
     private fun constructContainerFileParser(): ContentHandler {
@@ -135,6 +144,10 @@ class EpubFileParser : FileParser {
         val resolver = HrefResolver(opfFileName)
         childManifestItem.setStartElementListener { attributes ->
             manifest.add(ManifestItem(attributes, resolver))
+        }
+
+        root.setStartElementListener { attributes ->
+            epubVersion = attributes.getValue(XML_ATTRIBUTE_VERSION)
         }
 
         // get name of Table of Contents file from the Spine

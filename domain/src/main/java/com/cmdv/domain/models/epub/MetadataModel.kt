@@ -14,5 +14,5 @@ data class MetadataModel(
     val format: String?,
     val relation: String?,
     val rights: String?,
-    val type: String?,
+    val type: String?
 )

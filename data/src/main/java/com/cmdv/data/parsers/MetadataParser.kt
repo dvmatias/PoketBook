@@ -9,9 +9,10 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 private const val ROOT_ELEMENT = "package"
-private const val IDENTIFIER_ELEMENT = "dc:identifier"
-private const val TITLE_ELEMENT = "dc:title"
-private const val LANGUAGE_ELEMENT = "dc:language"
+private const val DC_IDENTIFIER_ELEMENT = "dc:identifier"
+private const val DC_TITLE_ELEMENT = "dc:title"
+private const val DC_LANGUAGE_ELEMENT = "dc:language"
+private const val DC_CREATOR_ELEMENT = "dc:creator"
 
 class MetadataParser {
 
@@ -20,13 +21,14 @@ class MetadataParser {
     private var identifiers: ArrayList<String> = arrayListOf()
     private var titles: ArrayList<String> = arrayListOf()
     private var languages: ArrayList<String> = arrayListOf()
+    private var creators: ArrayList<String> = arrayListOf()
 
     init {
         val factory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
         builder = factory.newDocumentBuilder()
     }
 
-    fun parse(opfFileInputStream: InputStream?): MetadataModel? {
+    fun parse(epubVersion: String, opfFileInputStream: InputStream?): MetadataModel? {
         val doc: Document = builder.parse(opfFileInputStream)
         doc.documentElement.normalize()
         val nodes: NodeList = doc.getElementsByTagName(ROOT_ELEMENT).item(0).childNodes
@@ -36,14 +38,14 @@ class MetadataParser {
             for (i in 0 until childNodes.length) {
                 with(childNodes.item(i)) {
                     when (this.nodeName) {
-                        IDENTIFIER_ELEMENT -> getPropertyValue(this)?.run { identifiers.add(this) }
-                        TITLE_ELEMENT -> getPropertyValue(this)?.run { titles.add(this) }
-                        LANGUAGE_ELEMENT -> getPropertyValue(this)?.run { languages.add(this) }
+                        DC_IDENTIFIER_ELEMENT -> setPropertyValue(this)?.run { identifiers.add(this) }
+                        DC_TITLE_ELEMENT -> setPropertyValue(this)?.run { titles.add(this) }
+                        DC_LANGUAGE_ELEMENT -> setPropertyValue(this)?.run { languages.add(this) }
+                        DC_CREATOR_ELEMENT -> setPropertyValue(this)?.run { creators.add(this) }
                         else -> {
                         }
                     }
                 }
-
             }
         }
         if (!isRequiredInfo()) return null
@@ -52,6 +54,7 @@ class MetadataParser {
             identifiers,
             titles,
             languages,
+            creators,
             null,
             null,
             null,
@@ -61,8 +64,7 @@ class MetadataParser {
             null,
             null,
             null,
-            null,
-            null,
+            null
         )
     }
 
@@ -76,7 +78,7 @@ class MetadataParser {
         return null
     }
 
-    private fun getPropertyValue(childNode: Node): String? =
+    private fun setPropertyValue(childNode: Node): String? =
         childNode.firstChild.nodeValue
 
     private fun isRequiredInfo(): Boolean =

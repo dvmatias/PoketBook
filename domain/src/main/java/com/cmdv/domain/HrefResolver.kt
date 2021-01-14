@@ -7,12 +7,8 @@ class HrefResolver(parentFileName: String?) {
     /*
      * path to file holding the href
      */
-    private val mParentPath: String
-    fun ToAbsolute(relativeHref: String): String {
-        return Utility.concatPath(mParentPath, relativeHref)
-    }
+    private val mParentPath: String = Utility.extractPath(parentFileName)
 
-    init {
-        mParentPath = Utility.extractPath(parentFileName)
-    }
+    fun toAbsolute(relativeHref: String): String = Utility.concatPath(mParentPath, relativeHref)
+
 }

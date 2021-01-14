@@ -17,7 +17,6 @@ class FileManagerImpl : FileManager {
 
     private var fileNames: List<String> = listOf()
     private val fileParserFactory: FileParserFactory = FileParserFactory()
-    private lateinit var parser: FileParser
 
     init {
         fileNames = getFileNames()
@@ -25,7 +24,7 @@ class FileManagerImpl : FileManager {
 
     override fun getEpubFiles(): List<EpubModel> {
         val epubs = arrayListOf<EpubModel>()
-        parser = fileParserFactory.newFileParser(FileType.EPUB)
+        val parser = fileParserFactory.newFileParser(FileType.EPUB)
         fileNames.filter { isEpubFile(it) }.forEach { fileName ->
             val epub: EpubModel? = parser.parse(fileName)
             epub?.run { epubs.add(this) }
@@ -35,8 +34,8 @@ class FileManagerImpl : FileManager {
 
     override fun getPdfFiles(): List<PdfModel> {
         val pdfs = arrayListOf<PdfModel>()
-        parser = fileParserFactory.newFileParser(FileType.PDF)
-        fileNames.filter { isEpubFile(it) }.forEach { fileName ->
+        val parser = fileParserFactory.newFileParser(FileType.PDF)
+        fileNames.filter { isPdfFile(it) }.forEach { fileName ->
             val pdf: PdfModel? = parser.parse(fileName)
             pdf?.run { pdfs.add(this) }
         }
