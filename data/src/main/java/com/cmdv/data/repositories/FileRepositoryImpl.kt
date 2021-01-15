@@ -15,13 +15,13 @@ class FileRepositoryImpl(
 ) : FilesRepository {
 
     override fun getDocuments() = flow {
-        var caca: List<DocumentModel>?
+        var documents: List<DocumentModel>?
         withContext(Dispatchers.IO) {
             val a = async { fetchEpubs() }
             val b = async { fetchPdfs() }
-            caca = a.await() + b.await()
+            documents = a.await() + b.await()
         }
-        emit(caca)
+        emit(documents)
     }
 
     private suspend fun fetchEpubs(): List<EpubModel> =

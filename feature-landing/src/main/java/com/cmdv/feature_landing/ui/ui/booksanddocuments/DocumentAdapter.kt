@@ -10,6 +10,7 @@ import com.cmdv.domain.models.DocumentModel
 import com.cmdv.domain.models.DocumentType
 import com.cmdv.domain.models.PdfModel
 import com.cmdv.domain.models.epub.EpubModel
+import com.cmdv.domain.models.epub.MetaItemModel
 import com.cmdv.feature_landing.R
 import com.cmdv.feature_landing.databinding.DocumentItemViewBinding
 import java.lang.IllegalStateException
@@ -50,7 +51,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
 
         private fun showEpub(epub: EpubModel, context: Context) {
             setTitleMain(epub.metadata.titles)
-            setTitleSecondary(epub.metadata.titles)
+            setTitleSecondary(epub.metadata.meta)
             setAuthor(epub.metadata.creators)
             setType(DocumentType.EPUB)
             setFormat(DocumentType.EPUB)
@@ -65,14 +66,20 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
             itemBinding.textViewTitleMain.text = titles[0]
         }
 
-        private fun setTitleSecondary(titles: ArrayList<String>) {
+        private fun setTitleSecondary(metaModel: ArrayList<MetaItemModel>?) {
             with(itemBinding.textViewTitleSecondary) {
-                visibility = View.GONE
-                val titleSecondary = if (titles.size > 1) titles[1] else null
-                titleSecondary?.let {
-                    text = it
-                    visibility = View.VISIBLE
+                var titleSecondary: String? = null
+                metaModel?.forEach {
+                    it.takeIf { it.name == "calibre:series" }?.run {
+                        titleSecondary = this.content
+                    }
+                }.also {
+                    titleSecondary?.let {
+                        text = it
+                        visibility = View.VISIBLE
+                    }
                 }
+
             }
         }
 

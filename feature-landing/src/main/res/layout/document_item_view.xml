@@ -48,10 +48,12 @@
             android:fontFamily="@font/open_sans_regular"
             android:textColor="#CBFFFFFF"
             android:textSize="12sp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/imageViewCover"
             app:layout_constraintTop_toBottomOf="@id/textViewTitleMain"
-            tools:text="La Comunidad del Anillo" />
+            tools:text="La Comunidad del Anillo"
+            tools:visibility="visible"/>
 
         <TextView
             android:id="@+id/textViewOf"

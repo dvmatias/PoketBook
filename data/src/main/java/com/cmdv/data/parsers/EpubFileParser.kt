@@ -4,6 +4,7 @@ import android.os.Environment
 import android.sax.Element
 import android.sax.RootElement
 import android.util.Log
+import com.cmdv.data.parsers.metadata.MetadataParser
 import com.cmdv.domain.HrefResolver
 import com.cmdv.domain.XmlUtil
 import com.cmdv.domain.models.DocumentType
@@ -39,6 +40,8 @@ class EpubFileParser : FileParser {
         private const val XML_ATTRIBUTE_VERSION = "version"
         private const val XML_ELEMENT_MANIFEST = "manifest"
         private const val XML_ELEMENT_MANIFEST_ITEM = "item"
+        private const val XML_ELEMENT_METADATA = "metadata"
+        private const val XML_ELEMENT_METADATA_META = "meta"
         private const val XML_ELEMENT_SPINE = "spine"
         private const val XML_ATTRIBUTE_TOC = "toc"
         private const val XML_ELEMENT_ITEM_REF = "itemref"
@@ -139,11 +142,17 @@ class EpubFileParser : FileParser {
         val root = RootElement(XML_NAMESPACE_PACKAGE, XML_ELEMENT_PACKAGE)
         val childManifest = root.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_MANIFEST)
         val childManifestItem = childManifest.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_MANIFEST_ITEM)
+        val childMetadata = root.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_METADATA)
+        val childMetadataMeta = childMetadata.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_METADATA_META)
         val childSpine = root.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_SPINE)
         val childItemRef = childSpine.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_ITEM_REF)
         val resolver = HrefResolver(opfFileName)
         childManifestItem.setStartElementListener { attributes ->
             manifest.add(ManifestItem(attributes, resolver))
+        }
+
+        childMetadataMeta.setStartElementListener { attributes ->
+            metadataModel
         }
 
         root.setStartElementListener { attributes ->
