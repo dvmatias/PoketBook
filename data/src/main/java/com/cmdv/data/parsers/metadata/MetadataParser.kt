@@ -1,9 +1,10 @@
 package com.cmdv.data.parsers.metadata
 
+import com.cmdv.data.entity.epub.EpubEntity
 import com.cmdv.domain.models.epub.MetaItemModel
-import com.cmdv.domain.models.epub.MetadataModel
 import org.w3c.dom.*
 import java.io.InputStream
+import java.lang.Exception
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -13,84 +14,66 @@ private const val DC_TITLE_ELEMENT = "dc:title"
 private const val DC_LANGUAGE_ELEMENT = "dc:language"
 private const val DC_CREATOR_ELEMENT = "dc:creator"
 private const val META_ELEMENT = "meta"
+private const val META_CONTENT = "content"
+private const val META_NAME = "name"
 
 class MetadataParser {
 
     private var builder: DocumentBuilder
-
-    private var identifiers: ArrayList<String> = arrayListOf()
-    private var titles: ArrayList<String> = arrayListOf()
-    private var languages: ArrayList<String> = arrayListOf()
-    private var creators: ArrayList<String> = arrayListOf()
-    private val meta: ArrayList<MetaItemModel>? by lazy { arrayListOf() }
+    private val dcElements: ArrayList<EpubEntity.MetadataEntity.DcItemEntity> = arrayListOf()
+    private val metaElements: ArrayList<EpubEntity.MetadataEntity.MetaItemEntity> = arrayListOf()
 
     init {
         val factory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
         builder = factory.newDocumentBuilder()
     }
 
-    fun parse(epubVersion: String, opfFileInputStream: InputStream?): MetadataModel? {
+    fun parse(epubVersion: String, opfFileInputStream: InputStream?): EpubEntity.MetadataEntity {
         val doc: Document = builder.parse(opfFileInputStream)
         doc.documentElement.normalize()
         val nodes: NodeList = doc.getElementsByTagName(ROOT_ELEMENT).item(0).childNodes
 
-        val metadataNode = getMetadataNode(nodes) ?: return null
-        metadataNode.childNodes?.let { childNodes ->
-            for (i in 0 until childNodes.length) {
-                with(childNodes.item(i)) {
-                    when (this.nodeName) {
-                        DC_IDENTIFIER_ELEMENT -> getDcPropertyValue(this)?.run { identifiers.add(this) }
-                        DC_TITLE_ELEMENT -> getDcPropertyValue(this)?.run { titles.add(this) }
-                        DC_LANGUAGE_ELEMENT -> getDcPropertyValue(this)?.run { languages.add(this) }
-                        DC_CREATOR_ELEMENT -> getDcPropertyValue(this)?.run { creators.add(this) }
-                        META_ELEMENT -> getMetaElement(this as Element)?.run { meta?.add(this) }
-                        else -> {
-                        }
-                    }
-                }
-            }
-        }
-        if (!isRequiredInfo()) return null
+        val metadataNodes = getMetadataChildNodes(nodes) ?: throw IllegalStateException("Metadata node can't be null.")
+        setDcElements(metadataNodes)
+        setMetaElements(metadataNodes)
 
-        return MetadataModel(
-            identifiers,
-            titles,
-            languages,
-            creators,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            meta
-        )
+        return EpubEntity.MetadataEntity(dcElements, metaElements)
     }
 
-    private fun getMetadataNode(nodes: NodeList): Node? {
+    private fun setDcElements(metadataNodes: NodeList) {
+        for (i in 0 until metadataNodes.length) {
+            try {
+                with(metadataNodes.item(i) as Element) {
+                    dcElements.add(EpubEntity.MetadataEntity.DcItemEntity(tagName, firstChild.nodeValue, null))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun setMetaElements(metadataNodes: NodeList) {
+        for (i in 0 until metadataNodes.length) {
+            try {
+                with(metadataNodes.item(i) as Element) {
+                    if (tagName == META_ELEMENT) {
+                        metaElements.add(EpubEntity.MetadataEntity.MetaItemEntity(getAttribute(META_CONTENT), getAttribute(META_NAME)))
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun getMetadataChildNodes(nodes: NodeList): NodeList? {
         for (i in 0 until nodes.length) {
             val node = nodes.item(i)
             if (node.nodeName == "metadata") {
-                return node
+                return node.childNodes
             }
         }
         return null
     }
-
-    private fun getDcPropertyValue(childNode: Node): String? =
-        childNode.firstChild.nodeValue
-
-    private fun getMetaElement(element: Element): MetaItemModel? =
-        MetaItemModel(
-            element.getAttribute("content"),
-            element.getAttribute("name")
-        )
-
-    private fun isRequiredInfo(): Boolean =
-        identifiers.isNotEmpty() && titles.isNotEmpty() && languages.isNotEmpty()
 
 }

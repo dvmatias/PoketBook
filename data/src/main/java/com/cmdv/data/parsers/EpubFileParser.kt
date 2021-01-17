@@ -4,11 +4,13 @@ import android.os.Environment
 import android.sax.Element
 import android.sax.RootElement
 import android.util.Log
+import com.cmdv.data.entity.FileEntity
+import com.cmdv.data.entity.epub.EpubEntity
 import com.cmdv.data.parsers.metadata.MetadataParser
 import com.cmdv.domain.HrefResolver
 import com.cmdv.domain.XmlUtil
 import com.cmdv.domain.models.DocumentType
-import com.cmdv.domain.models.epub.*
+import com.cmdv.domain.models.epub.TableOfContents
 import org.xml.sax.ContentHandler
 import java.io.File
 import java.io.IOException
@@ -23,8 +25,6 @@ class EpubFileParser : FileParser {
     private val TAG = EpubFileParser::class.java.simpleName
 
     companion object {
-        private const val HTTP_SCHEME = "http"
-
         // the container XML
         private const val XML_PATH_CONTAINER = "META-INF/container.xml"
         private const val XML_NAMESPACE_CONTAINER = "urn:oasis:names:tc:opendocument:xmlns:container"
@@ -32,7 +32,6 @@ class EpubFileParser : FileParser {
         private const val XML_ELEMENT_ROOT_FILES = "rootfiles"
         private const val XML_ELEMENT_ROOT_FILE = "rootfile"
         private const val XML_ATTRIBUTE_FULL_PATH = "full-path"
-        private const val XML_ATTRIBUTE_MEDIA_TYPE = "media-type"
 
         // the .opf XML
         private const val XML_NAMESPACE_PACKAGE = "http://www.idpf.org/2007/opf"
@@ -40,22 +39,23 @@ class EpubFileParser : FileParser {
         private const val XML_ATTRIBUTE_VERSION = "version"
         private const val XML_ELEMENT_MANIFEST = "manifest"
         private const val XML_ELEMENT_MANIFEST_ITEM = "item"
-        private const val XML_ELEMENT_METADATA = "metadata"
-        private const val XML_ELEMENT_METADATA_META = "meta"
         private const val XML_ELEMENT_SPINE = "spine"
         private const val XML_ATTRIBUTE_TOC = "toc"
         private const val XML_ELEMENT_ITEM_REF = "itemref"
         private const val XML_ATTRIBUTE_ID_REF = "idref"
+        private const val XML_ATTRIBUTE_HREF = "href"
+        private const val XML_ATTRIBUTE_ID = "id"
+        private const val XML_ATTRIBUTE_MEDIA_TYPE = "media-type"
     }
 
     private lateinit var zipFile: ZipFile
-    private lateinit var epubVersion: String
+    private lateinit var packageVersion: String
     private var opfFileName: String? = null
-    private var tocID: String? = null
-    private val spine: ArrayList<ManifestItem> = arrayListOf()
-    private val manifest: Manifest = Manifest()
+    private var tocId: String? = null
+    private val spine: ArrayList<EpubEntity.ManifestItemEntity> = arrayListOf()
     private val tableOfContents: TableOfContents = TableOfContents()
-    private var metadataModel: MetadataModel? = null
+    private lateinit var metadata: EpubEntity.MetadataEntity
+    private lateinit var manifest: EpubEntity.ManifestEntity
     private var fileSizeKb: Long = 0
 
     @Suppress("UNCHECKED_CAST")
@@ -65,22 +65,22 @@ class EpubFileParser : FileParser {
 
         try {
             zipFile = ZipFile(filePath)
-            // get the "container" file, this tells us where the ".opf" file is
             parseXmlResource(XML_PATH_CONTAINER, constructContainerFileParser())
-
             setupOpfFile()
             setupMetadata()
             setupTableOfContent()
-            setupFileSizeInKB(filePath)
+            setFieSizeKb(filePath)
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
-        return if (opfFileName != null && tocID != null) {
-            EpubModel(epubVersion, fileName, filePath, DocumentType.EPUB, fileSizeKb, opfFileName!!, tocID!!, metadataModel!!, spine, manifest, tableOfContents) as T
-        } else {
-            null
-        }
+        opfFileName?.let { opfFilename ->
+            tocId?.let { tocId ->
+                val file = FileEntity(fileName, filePath, DocumentType.EPUB, fileSizeKb)
+                val opf = EpubEntity.OpfEntity(opfFilename, packageVersion, metadata, manifest, spine)
+                return EpubEntity(file, opf, tocId, tableOfContents) as T
+            } ?: kotlin.run { return null }
+        } ?: kotlin.run { return null }
     }
 
     private fun parseXmlResource(fileName: String, handler: ContentHandler) {
@@ -97,8 +97,15 @@ class EpubFileParser : FileParser {
     }
 
     private fun setupTableOfContent() {
-        tocID?.let { _tocID ->
-            val tocManifestItem = manifest.findById(_tocID)
+        tocId?.let { _tocID ->
+            var tocManifestItem: EpubEntity.ManifestItemEntity? = null
+            for (i in 0 until manifest.items.size) {
+                val item = manifest.items[i]
+                if (item.id == _tocID) {
+                    tocManifestItem = item
+                    break
+                }
+            }
             tocManifestItem?.let { _tocManifestItem ->
                 val tocFileName = _tocManifestItem.href
                 val resolver = HrefResolver(tocFileName)
@@ -109,21 +116,19 @@ class EpubFileParser : FileParser {
 
     private fun setupMetadata() {
         opfFileName?.let {
-            metadataModel = MetadataParser().parse(epubVersion, fetchFromZip(it))
+            metadata = MetadataParser().parse(packageVersion, fetchFromZip(it))
         }
     }
 
-    private fun setupFileSizeInKB(filePath: String) {
+    private fun setFieSizeKb(filePath: String) {
         fileSizeKb = (File(filePath).length() / 1024)
     }
 
     private fun constructContainerFileParser(): ContentHandler {
-        // describe the relationship of the elements
         val root = RootElement(XML_NAMESPACE_CONTAINER, XML_ELEMENT_CONTAINER)
         val rootFilesElement: Element = root.getChild(XML_NAMESPACE_CONTAINER, XML_ELEMENT_ROOT_FILES)
         val rootFileElement: Element = rootFilesElement.getChild(XML_NAMESPACE_CONTAINER, XML_ELEMENT_ROOT_FILE)
 
-        // how to parse a rootFileElement
         rootFileElement.setStartElementListener { attributes ->
             val mediaType = attributes.getValue(XML_ATTRIBUTE_MEDIA_TYPE)
             if (mediaType != null && mediaType == "application/oebps-package+xml") {
@@ -142,31 +147,36 @@ class EpubFileParser : FileParser {
         val root = RootElement(XML_NAMESPACE_PACKAGE, XML_ELEMENT_PACKAGE)
         val childManifest = root.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_MANIFEST)
         val childManifestItem = childManifest.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_MANIFEST_ITEM)
-        val childMetadata = root.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_METADATA)
-        val childMetadataMeta = childMetadata.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_METADATA_META)
         val childSpine = root.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_SPINE)
         val childItemRef = childSpine.getChild(XML_NAMESPACE_PACKAGE, XML_ELEMENT_ITEM_REF)
         val resolver = HrefResolver(opfFileName)
-        childManifestItem.setStartElementListener { attributes ->
-            manifest.add(ManifestItem(attributes, resolver))
-        }
 
-        childMetadataMeta.setStartElementListener { attributes ->
-            metadataModel
+        val items = arrayListOf<EpubEntity.ManifestItemEntity>()
+        val idIndex: HashMap<String, EpubEntity.ManifestItemEntity> = HashMap()
+        childManifestItem.apply {
+            setStartElementListener { attributes ->
+                EpubEntity.ManifestItemEntity(
+                    resolver.toAbsolute(attributes.getValue(XML_ATTRIBUTE_HREF)),
+                    attributes.getValue(XML_ATTRIBUTE_ID),
+                    attributes.getValue(XML_ATTRIBUTE_MEDIA_TYPE)
+                ).let {
+                    items.add(it)
+                    idIndex[it.id] = it
+                }
+            }
+            setEndElementListener {
+                manifest = EpubEntity.ManifestEntity(items, idIndex)
+            }
         }
 
         root.setStartElementListener { attributes ->
-            epubVersion = attributes.getValue(XML_ATTRIBUTE_VERSION)
+            packageVersion = attributes.getValue(XML_ATTRIBUTE_VERSION)
         }
 
-        // get name of Table of Contents file from the Spine
-        childSpine.setStartElementListener { attributes -> tocID = attributes.getValue(XML_ATTRIBUTE_TOC) }
+        childSpine.setStartElementListener { attributes -> tocId = attributes.getValue(XML_ATTRIBUTE_TOC) }
         childItemRef.setStartElementListener { attributes ->
             val temp = attributes.getValue(XML_ATTRIBUTE_ID_REF)
-            temp?.let {
-                val item = manifest.findById(it)
-                item?.let { spine.add(item) }
-            }
+            temp?.let { manifest.idIndex[temp]?.let { spine.add(it) } }
         }
         return root.contentHandler
     }

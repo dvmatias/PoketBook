@@ -1,19 +1,20 @@
-package com.cmdv.core.managers
+package com.cmdv.data.providers
 
 import android.os.Environment
-import com.cmdv.data.parsers.FileParser
+import com.cmdv.data.entity.epub.EpubEntity
+import com.cmdv.data.mappers.EpubMapper
 import com.cmdv.data.parsers.FileParserFactory
 import com.cmdv.data.parsers.FileType
-import com.cmdv.domain.managers.FileManager
+import com.cmdv.domain.providers.FilesProvider
 import com.cmdv.domain.models.epub.EpubModel
-import com.cmdv.domain.models.PdfModel
+import com.cmdv.domain.models.pdf.PdfModel
 import java.util.*
 import java.util.regex.Pattern
 
 private const val FILE_EXTENSION_EPUB = ".*epub$"
 private const val FILE_EXTENSION_PDF = ".*pdf$"
 
-class FileManagerImpl : FileManager {
+class FilesProviderImpl : FilesProvider {
 
     private var fileNames: List<String> = listOf()
     private val fileParserFactory: FileParserFactory = FileParserFactory()
@@ -26,8 +27,8 @@ class FileManagerImpl : FileManager {
         val epubs = arrayListOf<EpubModel>()
         val parser = fileParserFactory.newFileParser(FileType.EPUB)
         fileNames.filter { isEpubFile(it) }.forEach { fileName ->
-            val epub: EpubModel? = parser.parse(fileName)
-            epub?.run { epubs.add(this) }
+            val epub: EpubEntity? = parser.parse(fileName)
+            epub?.run { epubs.add(EpubMapper().transformEntityToModel(epub)) }
         }
         return epubs
     }

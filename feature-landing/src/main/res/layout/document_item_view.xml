@@ -28,7 +28,7 @@
             app:layout_constraintWidth_percent="0.35" />
 
         <TextView
-            android:id="@+id/textViewTitleMain"
+            android:id="@+id/text_view_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -41,17 +41,31 @@
             tools:text="El Señor de Los Anillos" />
 
         <TextView
-            android:id="@+id/textViewTitleSecondary"
+            android:id="@+id/text_view_series_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans_semi_bold"
+            android:textColor="#CBFFFFFF"
+            android:textSize="8sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/imageViewCover"
+            app:layout_constraintTop_toTopOf="@id/text_view_series"
+            tools:text="1"
+            tools:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/text_view_series"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:fontFamily="@font/open_sans_regular"
+            android:fontFamily="@font/open_sans_semi_bold"
             android:textColor="#CBFFFFFF"
             android:textSize="12sp"
             android:visibility="gone"
+            android:layout_marginStart="2dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imageViewCover"
-            app:layout_constraintTop_toBottomOf="@id/textViewTitleMain"
+            app:layout_constraintStart_toEndOf="@id/text_view_series_index"
+            app:layout_constraintTop_toBottomOf="@id/text_view_title"
             tools:text="La Comunidad del Anillo"
             tools:visibility="visible"/>
 
@@ -78,7 +92,7 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/textViewOf"
-            app:layout_constraintTop_toBottomOf="@id/textViewTitleSecondary"
+            app:layout_constraintTop_toBottomOf="@id/text_view_series"
             tools:text="J. R. R. Tolkien" />
 
         <ImageView

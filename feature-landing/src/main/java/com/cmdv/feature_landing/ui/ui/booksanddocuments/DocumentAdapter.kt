@@ -8,12 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmdv.core.utils.getFileSizeFromSizeInKBWithUnit
 import com.cmdv.domain.models.DocumentModel
 import com.cmdv.domain.models.DocumentType
-import com.cmdv.domain.models.PdfModel
 import com.cmdv.domain.models.epub.EpubModel
-import com.cmdv.domain.models.epub.MetaItemModel
+import com.cmdv.domain.models.pdf.PdfModel
 import com.cmdv.feature_landing.R
 import com.cmdv.feature_landing.databinding.DocumentItemViewBinding
-import java.lang.IllegalStateException
 
 class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
 
@@ -50,48 +48,47 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
         }
 
         private fun showEpub(epub: EpubModel, context: Context) {
-            setTitleMain(epub.metadata.titles)
-            setTitleSecondary(epub.metadata.meta)
-            setAuthor(epub.metadata.creators)
+            setTitle(epub.title)
+            setSeries(epub.series)
+            setSeriesIndex(epub.seriesIndex)
+            setAuthor(epub.author)
             setType(DocumentType.EPUB)
             setFormat(DocumentType.EPUB)
-            setFileSize(epub.fileSize, context)
+            setFileSize(epub.file.size, context)
         }
 
         private fun showPdf(pdf: PdfModel) {
 
         }
 
-        private fun setTitleMain(titles: ArrayList<String>) {
-            itemBinding.textViewTitleMain.text = titles[0]
+        private fun setTitle(title: String) {
+            itemBinding.textViewTitle.text = title
         }
 
-        private fun setTitleSecondary(metaModel: ArrayList<MetaItemModel>?) {
-            with(itemBinding.textViewTitleSecondary) {
-                var titleSecondary: String? = null
-                metaModel?.forEach {
-                    it.takeIf { it.name == "calibre:series" }?.run {
-                        titleSecondary = this.content
-                    }
-                }.also {
-                    titleSecondary?.let {
-                        text = it
-                        visibility = View.VISIBLE
-                    }
+        private fun setSeries(series: String) {
+            with(itemBinding.textViewSeries) {
+                if (series.isNotEmpty()) {
+                    text = series
+                    visibility = View.VISIBLE
                 }
-
             }
         }
 
-        private fun setAuthor(authors: ArrayList<String>?) {
+        private fun setSeriesIndex(seriesIndex: String) {
+            with(itemBinding.textViewSeriesIndex) {
+                if (seriesIndex.isNotEmpty()) {
+                    text = seriesIndex
+                    visibility = View.VISIBLE
+                }
+            }
+        }
+
+        private fun setAuthor(author: String?) {
             with(itemBinding.textViewAuthor) {
                 visibility = View.GONE
-                authors?.let {
-                    val author = if (it.size > 0) it[0] else null
-                    author?.let {
-                        text = author
-                        visibility = View.VISIBLE
-                    }
+                author?.let {
+                    text = author
+                    visibility = View.VISIBLE
                 }
             }
         }
