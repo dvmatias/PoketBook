@@ -1,7 +1,6 @@
 package com.cmdv.domain.models.epub
 
 import android.content.Intent
-import android.os.Parcelable
 import android.sax.*
 import com.cmdv.domain.HrefResolver
 import org.xml.sax.ContentHandler
@@ -81,7 +80,7 @@ class TableOfContents {
             }
         })
         text.setEndTextElementListener(EndTextElementListener { body -> latestPoint.navLabel =body })
-        content.setStartElementListener(StartElementListener { attributes -> latestPoint.content = mHrefResolver?.ToAbsolute(attributes.getValue(XML_ATTRIBUTE_SCR)) })
+        content.setStartElementListener(StartElementListener { attributes -> latestPoint.content = mHrefResolver?.toAbsolute(attributes.getValue(XML_ATTRIBUTE_SCR)) })
         navPoint.setEndElementListener(EndElementListener { --mCurrentDepth })
     }
 

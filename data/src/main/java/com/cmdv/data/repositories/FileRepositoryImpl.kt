@@ -1,26 +1,36 @@
 package com.cmdv.data.repositories
 
-import com.cmdv.domain.managers.FileManager
+import com.cmdv.domain.providers.FilesProvider
+import com.cmdv.domain.models.DocumentModel
+import com.cmdv.domain.models.pdf.PdfModel
 import com.cmdv.domain.models.epub.EpubModel
-import com.cmdv.domain.models.PdfModel
 import com.cmdv.domain.repositories.FilesRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 class FileRepositoryImpl(
-    private val fileManager: FileManager
+    private val filesProvider: FilesProvider
 ) : FilesRepository {
 
-    override fun fetchEpubFiles(): Flow<List<EpubModel>?> =
-        flow {
-            emit(fileManager.getEpubFiles())
-        }.flowOn(Dispatchers.Default)
+    override fun getDocuments() = flow {
+        var documents: List<DocumentModel>?
+        withContext(Dispatchers.IO) {
+            val a = async { fetchEpubs() }
+            val b = async { fetchPdfs() }
+            documents = a.await() + b.await()
+        }
+        emit(documents)
+    }
 
-    override fun fetchPdfFiles(): Flow<List<PdfModel>?> =
-        flow {
-            emit(fileManager.getPdfFiles())
-        }.flowOn(Dispatchers.Default)
+    private suspend fun fetchEpubs(): List<EpubModel> =
+        withContext(Dispatchers.IO) {
+            filesProvider.getEpubFiles()
+        }
 
+    private suspend fun fetchPdfs(): List<PdfModel> =
+        withContext(Dispatchers.IO) {
+            filesProvider.getPdfFiles()
+        }
 }

@@ -16,7 +16,7 @@ class ManifestItem(attributes: Attributes, resolver: HrefResolver) {
      * Construct from XML
      */
     init {
-        href = resolver.ToAbsolute(attributes.getValue(XML_ATTRIBUTE_HREF))
+        href = resolver.toAbsolute(attributes.getValue(XML_ATTRIBUTE_HREF))
         iD = attributes.getValue(XML_ATTRIBUTE_ID)
         mediaType = attributes.getValue(XML_ATTRIBUTE_MEDIA_TYPE)
     }

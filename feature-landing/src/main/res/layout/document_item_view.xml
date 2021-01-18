@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    app:cardBackgroundColor="#235175"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="190dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewCover"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_marginStart="4dp"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="600:900"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageViewCover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@null" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/open_sans_bold"
+            android:textColor="#FFF"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cardViewCover"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="El Señor de Los Anillos" />
+
+        <TextView
+            android:id="@+id/text_view_series_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/open_sans_bold"
+            android:textColor="#FFFFFF"
+            android:textSize="8sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/cardViewCover"
+            app:layout_constraintTop_toTopOf="@id/text_view_series"
+            tools:text="1"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/text_view_series"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/open_sans_semi_bold"
+            android:textColor="#CBFFFFFF"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/text_view_series_index"
+            app:layout_constraintTop_toBottomOf="@id/text_view_title"
+            tools:text="La Comunidad del Anillo"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/textViewOf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/cereal_book"
+            android:text="@string/of"
+            android:textColor="#CBFFFFFF"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/textViewAuthor"
+            app:layout_constraintStart_toEndOf="@id/cardViewCover" />
+
+        <TextView
+            android:id="@+id/textViewAuthor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/cereal_book"
+            android:textColor="#FFF"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/textViewOf"
+            app:layout_constraintTop_toBottomOf="@id/text_view_series"
+            tools:text="J. R. R. Tolkien" />
+
+        <ImageView
+            android:id="@+id/imageViewType"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_slideshow"
+            app:layout_constraintStart_toEndOf="@id/cardViewCover"
+            app:layout_constraintTop_toBottomOf="@id/textViewAuthor" />
+
+        <TextView
+            android:id="@+id/textViewFormat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/cereal_bold"
+            android:textColor="#FFF"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewType"
+            app:layout_constraintStart_toEndOf="@id/imageViewType"
+            app:layout_constraintTop_toTopOf="@id/imageViewType"
+            tools:text="PDF" />
+
+        <TextView
+            android:id="@+id/textViewSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/cereal_book"
+            android:textColor="#CBFFFFFF"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/textViewFormat"
+            app:layout_constraintStart_toEndOf="@id/textViewFormat"
+            tools:text="88KB" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
