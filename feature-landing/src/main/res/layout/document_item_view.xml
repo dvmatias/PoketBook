@@ -6,14 +6,14 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/dimen_4dp"
     android:layout_marginEnd="@dimen/dimen_4dp"
-    app:cardBackgroundColor="#235175"
+    app:cardBackgroundColor="#19404C"
     app:cardCornerRadius="@dimen/dimen_8dp"
     app:cardElevation="@dimen/dimen_2dp"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="190dp">
+        android:layout_height="160dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewCover"
