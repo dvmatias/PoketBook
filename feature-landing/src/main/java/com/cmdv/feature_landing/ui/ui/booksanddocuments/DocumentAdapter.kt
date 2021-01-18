@@ -1,6 +1,8 @@
 package com.cmdv.feature_landing.ui.ui.booksanddocuments
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +14,7 @@ import com.cmdv.domain.models.epub.EpubModel
 import com.cmdv.domain.models.pdf.PdfModel
 import com.cmdv.feature_landing.R
 import com.cmdv.feature_landing.databinding.DocumentItemViewBinding
+
 
 class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
 
@@ -48,6 +51,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
         }
 
         private fun showEpub(epub: EpubModel, context: Context) {
+            setCover(epub.cover.image)
             setTitle(epub.title)
             setSeries(epub.series)
             setSeriesIndex(epub.seriesIndex)
@@ -59,6 +63,16 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
 
         private fun showPdf(pdf: PdfModel) {
 
+        }
+
+        private fun setCover(cover: String) {
+            if (cover.isEmpty()) {
+                // TODO display "no-cover" image
+            } else {
+                val coverBytes = Base64.decode(cover, Base64.DEFAULT)
+                val decodedImage = BitmapFactory.decodeByteArray(coverBytes, 0, coverBytes.size)
+                itemBinding.imageViewCover.setImageBitmap(decodedImage)
+            }
         }
 
         private fun setTitle(title: String) {
@@ -96,7 +110,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
         private fun setType(documentType: DocumentType) {
             itemBinding.imageViewType.setImageResource(
                 when (documentType) {
-                    DocumentType.EPUB -> R.drawable.ic_menu_camera
+                    DocumentType.EPUB -> R.drawable.ic_epub_24dp
                     DocumentType.PDF -> R.drawable.ic_menu_gallery
                     else -> throw IllegalStateException("A document must have a valid format.")
                 }

@@ -1,9 +1,13 @@
 package com.cmdv.data.parsers
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
 import android.sax.Element
 import android.sax.RootElement
+import android.util.Base64
 import android.util.Log
+import android.webkit.MimeTypeMap
 import com.cmdv.data.entity.FileEntity
 import com.cmdv.data.entity.epub.EpubEntity
 import com.cmdv.data.parsers.metadata.MetadataParser
@@ -12,6 +16,7 @@ import com.cmdv.domain.XmlUtil
 import com.cmdv.domain.models.DocumentType
 import com.cmdv.domain.models.epub.TableOfContents
 import org.xml.sax.ContentHandler
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -78,10 +83,34 @@ class EpubFileParser : FileParser {
             tocId?.let { tocId ->
                 val file = FileEntity(fileName, filePath, DocumentType.EPUB, fileSizeKb)
                 val opf = EpubEntity.OpfEntity(opfFilename, packageVersion, metadata, manifest, spine)
-                return EpubEntity(file, opf, tocId, tableOfContents) as T
+                val cover = getCover()
+
+                return EpubEntity(file, cover, opf, tocId, tableOfContents) as T
             } ?: kotlin.run { return null }
         } ?: kotlin.run { return null }
     }
+
+    private fun getCover(): EpubEntity.CoverEntity? {
+        val coverMetaItem: EpubEntity.MetadataEntity.MetaItemEntity? = getMetaByName("cover")
+        coverMetaItem?.let { metaItem ->
+            val coverManifestItem: EpubEntity.ManifestItemEntity? = getManifestItemById(metaItem.content)
+            coverManifestItem?.let { manifestItem ->
+                return EpubEntity.CoverEntity(
+                    getCoverImageBase64(manifestItem.href, manifestItem.mediaType),
+                    manifestItem.mediaType
+                )
+            }
+        }
+        return null
+    }
+
+    private fun getMetaByName(metaName: String): EpubEntity.MetadataEntity.MetaItemEntity? {
+        metadata.metaElements.forEach { if (it.name == metaName) return it }
+        return null
+    }
+
+    private fun getManifestItemById(id: String) : EpubEntity.ManifestItemEntity? =
+        manifest.idIndex[id]
 
     private fun parseXmlResource(fileName: String, handler: ContentHandler) {
         val inputStream: InputStream? = fetchFromZip(fileName)
@@ -196,6 +225,33 @@ class EpubFileParser : FileParser {
         }
         inputStream?.let { } ?: Log.e(TAG, "Unable to find file in zip: $fileName")
         return inputStream
+    }
+
+    private fun getCoverImageBase64(imageName: String, mediaType: String): String? {
+        val sanitizedImageName = imageName.substringBeforeLast(".").substringAfterLast("/")
+        val enumeration = zipFile.entries()
+        while (enumeration.hasMoreElements()) {
+            var coverFound = false
+            val entry = enumeration.nextElement()
+            val fileName = entry.name.substringAfterLast("/").substringBeforeLast(".")
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(entry.name)
+            val fileExtensionMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension)
+            fileExtensionMimeType?.let {
+                if (fileName == sanitizedImageName && it == mediaType) {
+                    val inputStream = zipFile.getInputStream(entry)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+
+                    val byteArrayOutputStream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                    val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
+                    val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+                    coverFound = true
+                    return imageString
+                }
+            }
+            if (coverFound) break
+        }
+        return null
     }
 
 }

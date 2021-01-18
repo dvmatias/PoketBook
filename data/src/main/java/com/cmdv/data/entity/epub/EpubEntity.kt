@@ -6,10 +6,16 @@ import org.w3c.dom.Attr
 
 data class EpubEntity(
     val file: FileEntity,
+    val cover: CoverEntity?,
     val opf: OpfEntity,
     val tocId: String,
     val tableOfContents: TableOfContents
 ) {
+    data class CoverEntity(
+        val image: String?,
+        val mediaType: String?
+    )
+
     data class OpfEntity(
         val opfFileName: String,
         val packageVersion: String,

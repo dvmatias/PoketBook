@@ -9,8 +9,16 @@ data class EpubModel(
     val file: FileModel,
     val title: String,
     val author: String,
+    val cover: CoverModel,
     val language: String,
     val series: String,
     val seriesIndex: String,
     val format: String,
-) : DocumentModel()
+) : DocumentModel() {
+
+    data class CoverModel(
+        val image: String,
+        val mediaType: String
+    )
+
+}
