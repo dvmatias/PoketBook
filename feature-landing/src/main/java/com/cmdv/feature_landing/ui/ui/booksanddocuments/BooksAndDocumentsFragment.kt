@@ -1,7 +1,6 @@
 package com.cmdv.feature_landing.ui.ui.booksanddocuments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmdv.domain.models.DocumentModel
 import com.cmdv.feature_landing.databinding.FragmentBooksAndDocumentsBinding
-import java.text.FieldPosition
 
 class BooksAndDocumentsFragment : Fragment() {
 
@@ -65,12 +63,12 @@ class BooksAndDocumentsFragment : Fragment() {
     }
 
     /**
-     * []
+     * [DocumentAdapter.DocumentItemListener] interface implementation.
      */
     private val documentItemListener = object : DocumentAdapter.DocumentItemListener {
         override fun onDocumentClick(position: Int) {
             val document = documentAdapter.getItemByPosition(position)
-            
+
         }
     }
 

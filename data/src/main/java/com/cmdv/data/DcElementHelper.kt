@@ -2,7 +2,7 @@ package com.cmdv.data
 
 import com.cmdv.data.entity.epub.EpubEntity
 
-class DcElementHelper() {
+class DcElementHelper {
 
     companion object {
         const val DC_IDENTIFIER_ELEMENT = "dc:identifier"
