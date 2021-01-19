@@ -10,10 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.cmdv.core.bases.BaseFragment
 import com.cmdv.feature_landing.R
-import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
-@AndroidEntryPoint
 class CurrentReadingFragment : BaseFragment<OpenBooksViewModel>() {
 
     override fun onCreateView(

@@ -11,9 +11,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class BooksAndDocumentsViewModel : ViewModel() {
-
-    private var filesRepository: FilesRepository = FileRepositoryImpl(FilesProviderImpl())
+class BooksAndDocumentsViewModel(
+    private val filesRepository: FilesRepository
+) : ViewModel() {
 
     private val mutableDocumentsLiveData = MutableLiveData<List<DocumentModel>>()
     private var getDocumentsJob: Job? = null

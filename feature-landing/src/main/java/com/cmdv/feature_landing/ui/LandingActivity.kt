@@ -13,9 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.cmdv.feature_landing.R
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class LandingActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration

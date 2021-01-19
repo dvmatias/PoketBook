@@ -5,14 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import org.koin.android.viewmodel.ext.android.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmdv.domain.models.DocumentModel
 import com.cmdv.feature_landing.databinding.FragmentBooksAndDocumentsBinding
 
 class BooksAndDocumentsFragment : Fragment() {
 
-    private val viewModel by viewModels<BooksAndDocumentsViewModel>()
+    private val viewModel: BooksAndDocumentsViewModel by viewModel()
     private var _binding: FragmentBooksAndDocumentsBinding? = null
     private val binding get() = _binding!!
     private lateinit var documentAdapter: DocumentAdapter
