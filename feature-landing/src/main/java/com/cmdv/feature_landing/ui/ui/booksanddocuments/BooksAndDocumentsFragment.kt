@@ -78,6 +78,7 @@ class BooksAndDocumentsFragment : Fragment() {
             val document = documentAdapter.getItemByPosition(position)
             activity?.let {
                 val bundle = Bundle().apply {
+                    putString(Constants.EXTRA_DOCUMENT_FORMAT_KEY, document.fileType)
                     putString(Constants.EXTRA_DOCUMENT_KEY, gson.toJson(document, document.javaClass))
                 }
                 navigator.toDocumentDetailActivity(it, bundle, null, false)

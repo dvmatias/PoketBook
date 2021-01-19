@@ -29,7 +29,7 @@
         <activity
             android:name="com.cmdv.feature_document_detail.ui.DocumentDetailActivity"
             android:label="@string/title_activity_document_detail"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.DetailDocumentActivityTheme" />
     </application>
 
 </manifest>
