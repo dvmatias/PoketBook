@@ -5,19 +5,20 @@
     android:id="@+id/cardViewDocumentContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/dimen_4dp"
-    android:layout_marginEnd="@dimen/dimen_4dp"
+    android:layout_marginStart="@dimen/dimen_8dp"
+    android:layout_marginTop="@dimen/dimen_2dp"
+    android:layout_marginEnd="@dimen/dimen_8dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="#19404C"
+    app:cardBackgroundColor="#13313E"
     app:cardCornerRadius="@dimen/dimen_8dp"
-    app:cardElevation="@dimen/dimen_2dp"
+    app:cardElevation="@dimen/dimen_3dp"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="190dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewCover"
@@ -47,9 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_8dp"
             android:layout_marginTop="@dimen/dimen_8dp"
-            android:fontFamily="@font/open_sans_bold"
+            android:fontFamily="@font/open_sans_semi_bold"
             android:textColor="#FFF"
-            android:textSize="@dimen/text_18sp"
+            android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cardViewCover"
             app:layout_constraintTop_toTopOf="parent"
@@ -93,7 +94,7 @@
             android:fontFamily="@font/cereal_book"
             android:text="@string/of"
             android:textColor="#CBFFFFFF"
-            android:textSize="@dimen/text_12sp"
+            android:textSize="@dimen/text_10sp"
             app:layout_constraintBottom_toBottomOf="@id/textViewAuthor"
             app:layout_constraintStart_toEndOf="@id/cardViewCover" />
 
@@ -105,7 +106,7 @@
             android:layout_marginTop="@dimen/dimen_6dp"
             android:fontFamily="@font/cereal_book"
             android:textColor="#FFF"
-            android:textSize="@dimen/text_14sp"
+            android:textSize="@dimen/text_12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/textViewOf"
             app:layout_constraintTop_toBottomOf="@id/text_view_series"

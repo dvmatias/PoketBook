@@ -67,9 +67,8 @@ class DocumentAdapter(
             showType(DocumentType.EPUB)
             showFormat(DocumentType.EPUB)
             showFileSize(epub.file.size, context)
-            itemBinding.cardViewDocumentContainer.setOnClickListener {
-                listener.onDocumentClick(position)
-            }
+            itemBinding.cardViewDocumentContainer.setOnClickListener { listener.onDocumentDetailClick(position) }
+            itemBinding.cardViewCover.setOnClickListener { listener.onDocumentCoverClick(position) }
         }
 
         private fun showPdf(pdf: PdfModel) {
@@ -137,7 +136,8 @@ class DocumentAdapter(
     }
 
     interface DocumentItemListener {
-        fun onDocumentClick(position: Int)
+        fun onDocumentDetailClick(position: Int)
+        fun onDocumentCoverClick(position: Int)
     }
 
 }

@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmdv.core.Constants
 import com.cmdv.core.navigator.Navigator
 import com.cmdv.domain.models.DocumentModel
+import com.cmdv.domain.models.epub.EpubModel
 import com.cmdv.feature_landing.databinding.FragmentBooksAndDocumentsBinding
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -72,7 +74,7 @@ class BooksAndDocumentsFragment : Fragment() {
      * [DocumentAdapter.DocumentItemListener] interface implementation.
      */
     private val documentItemListener = object : DocumentAdapter.DocumentItemListener {
-        override fun onDocumentClick(position: Int) {
+        override fun onDocumentDetailClick(position: Int) {
             val document = documentAdapter.getItemByPosition(position)
             activity?.let {
                 val bundle = Bundle().apply {
@@ -80,6 +82,14 @@ class BooksAndDocumentsFragment : Fragment() {
                 }
                 navigator.toDocumentDetailActivity(it, bundle, null, false)
             }
+        }
+
+        override fun onDocumentCoverClick(position: Int) {
+            val document = documentAdapter.getItemByPosition(position)
+            if (document is EpubModel) {
+                Toast.makeText(activity, document.title, Toast.LENGTH_SHORT).show()
+            }
+            // TODO Open book
         }
     }
 
