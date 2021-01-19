@@ -5,6 +5,7 @@ import com.cmdv.domain.models.DocumentType
 import com.cmdv.domain.models.FileModel
 
 data class EpubModel(
+    override val id: String,
     override val fileType: DocumentType,
     val file: FileModel,
     val title: String,

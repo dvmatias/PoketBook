@@ -1,6 +1,7 @@
 package com.cmdv.feature_landing.ui.ui.booksanddocuments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmdv.domain.models.DocumentModel
 import com.cmdv.feature_landing.databinding.FragmentBooksAndDocumentsBinding
+import java.text.FieldPosition
 
 class BooksAndDocumentsFragment : Fragment() {
 
@@ -49,7 +51,7 @@ class BooksAndDocumentsFragment : Fragment() {
     private fun setupRecyclerView() {
         binding.recyclerView.apply {
             activity?.let { context ->
-                documentAdapter = DocumentAdapter(context)
+                documentAdapter = DocumentAdapter(context, documentItemListener)
                 adapter = documentAdapter
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             }
@@ -60,6 +62,16 @@ class BooksAndDocumentsFragment : Fragment() {
         documentAdapter.setItems(documents)
         binding.progressBar.visibility = View.GONE
         binding.recyclerView.visibility = View.VISIBLE
+    }
+
+    /**
+     * []
+     */
+    private val documentItemListener = object : DocumentAdapter.DocumentItemListener {
+        override fun onDocumentClick(position: Int) {
+            val document = documentAdapter.getItemByPosition(position)
+            
+        }
     }
 
 }

@@ -22,8 +22,8 @@ class BooksAndDocumentsViewModel : ViewModel() {
     fun getDocuments() {
         getDocumentsJob.cancelIfActive()
         getDocumentsJob = viewModelScope.launch {
-            filesRepository.getDocuments().collect {
-                mutableDocumentsLiveData.value = it
+            filesRepository.getDocuments().collect { documents ->
+                mutableDocumentsLiveData.value = documents?.distinctBy { it.id }
             }
         }
     }

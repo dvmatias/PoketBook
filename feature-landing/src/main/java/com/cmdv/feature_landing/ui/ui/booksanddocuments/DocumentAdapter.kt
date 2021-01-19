@@ -16,7 +16,10 @@ import com.cmdv.feature_landing.R
 import com.cmdv.feature_landing.databinding.DocumentItemViewBinding
 
 
-class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
+class DocumentAdapter(
+    private val context: Context,
+    private val listener: DocumentItemListener
+    ) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
 
     private val documents = arrayListOf<DocumentModel>()
 
@@ -34,38 +37,48 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
     }
 
     override fun onBindViewHolder(holder: DocumentViewHolder, position: Int) {
-        holder.bindView(documents[position], context)
+        holder.bindView(documents[position], context, listener, position)
     }
 
     override fun getItemCount(): Int =
         documents.size
 
-    class DocumentViewHolder(private val itemBinding: DocumentItemViewBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    fun getItemByPosition(position: Int) = documents[position]
 
-        fun bindView(document: DocumentModel, context: Context) {
+    class DocumentViewHolder(private val itemBinding: DocumentItemViewBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+        private lateinit var context: Context
+        private lateinit var listener: DocumentItemListener
+
+        fun bindView(document: DocumentModel, context: Context, listener: DocumentItemListener, position: Int) {
+            this.context = context
+            this.listener = listener
+
             when (document.fileType) {
-                DocumentType.EPUB -> showEpub(document as EpubModel, context)
+                DocumentType.EPUB -> setEpub(document as EpubModel, position)
                 DocumentType.PDF -> showPdf(document as PdfModel)
                 else -> throw IllegalStateException("A document must have a valid format.")
             }
         }
 
-        private fun showEpub(epub: EpubModel, context: Context) {
-            setCover(epub.cover.image)
-            setTitle(epub.title)
-            setSeries(epub.series)
-            setSeriesIndex(epub.seriesIndex)
-            setAuthor(epub.author)
-            setType(DocumentType.EPUB)
-            setFormat(DocumentType.EPUB)
-            setFileSize(epub.file.size, context)
+        private fun setEpub(epub: EpubModel, position: Int) {
+            showCover(epub.cover.image)
+            showTitle(epub.title)
+            showSeries(epub.series)
+            showSeriesIndex(epub.seriesIndex)
+            showAuthor(epub.author)
+            showType(DocumentType.EPUB)
+            showFormat(DocumentType.EPUB)
+            showFileSize(epub.file.size, context)
+            itemBinding.cardViewDocumentContainer.setOnClickListener {
+                listener.onDocumentClick(position)
+            }
         }
 
         private fun showPdf(pdf: PdfModel) {
 
         }
 
-        private fun setCover(cover: String) {
+        private fun showCover(cover: String) {
             if (cover.isEmpty()) {
                 // TODO display "no-cover" image
             } else {
@@ -75,11 +88,11 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
             }
         }
 
-        private fun setTitle(title: String) {
+        private fun showTitle(title: String) {
             itemBinding.textViewTitle.text = title
         }
 
-        private fun setSeries(series: String) {
+        private fun showSeries(series: String) {
             with(itemBinding.textViewSeries) {
                 if (series.isNotEmpty()) {
                     text = series
@@ -88,7 +101,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
             }
         }
 
-        private fun setSeriesIndex(seriesIndex: String) {
+        private fun showSeriesIndex(seriesIndex: String) {
             with(itemBinding.textViewSeriesIndex) {
                 if (seriesIndex.isNotEmpty()) {
                     text = seriesIndex
@@ -97,7 +110,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
             }
         }
 
-        private fun setAuthor(author: String?) {
+        private fun showAuthor(author: String?) {
             with(itemBinding.textViewAuthor) {
                 visibility = View.GONE
                 author?.let {
@@ -107,7 +120,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
             }
         }
 
-        private fun setType(documentType: DocumentType) {
+        private fun showType(documentType: DocumentType) {
             itemBinding.imageViewType.setImageResource(
                 when (documentType) {
                     DocumentType.EPUB -> R.drawable.ic_epub_24dp
@@ -117,7 +130,7 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
             )
         }
 
-        private fun setFormat(documentType: DocumentType) {
+        private fun showFormat(documentType: DocumentType) {
             itemBinding.textViewFormat.text =
                 when (documentType) {
                     DocumentType.EPUB -> "EPUB"
@@ -126,9 +139,13 @@ class DocumentAdapter(private val context: Context) : RecyclerView.Adapter<Docum
                 }
         }
 
-        private fun setFileSize(fileSize: Long, context: Context) {
+        private fun showFileSize(fileSize: Long, context: Context) {
             itemBinding.textViewSize.text = fileSize.getFileSizeFromSizeInKBWithUnit(context)
         }
+    }
+
+    interface DocumentItemListener {
+        fun onDocumentClick(position: Int)
     }
 
 }
