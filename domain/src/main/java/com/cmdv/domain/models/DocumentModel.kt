@@ -1,9 +1,9 @@
 package com.cmdv.domain.models
 
-open class DocumentModel {
-    open val id: String = ""
-    open val fileType: DocumentType = DocumentType.DEFAULT
-}
+abstract class DocumentModel(
+    val id: String,
+    val fileType: String,
+)
 
 enum class DocumentType(val format: String) {
     DEFAULT(""),

@@ -4,4 +4,4 @@ import com.cmdv.domain.models.DocumentModel
 
 data class PdfModel(
     val a: Any
-) : DocumentModel()
+) : DocumentModel("", "")

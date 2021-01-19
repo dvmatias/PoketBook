@@ -1,8 +1,6 @@
 package com.cmdv.feature_landing.ui.ui.booksanddocuments
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,14 +52,14 @@ class DocumentAdapter(
             this.listener = listener
 
             when (document.fileType) {
-                DocumentType.EPUB -> setEpub(document as EpubModel, position)
-                DocumentType.PDF -> showPdf(document as PdfModel)
+                DocumentType.EPUB.format -> setEpub(document as EpubModel, position)
+                DocumentType.PDF.format -> showPdf(document as PdfModel)
                 else -> throw IllegalStateException("A document must have a valid format.")
             }
         }
 
         private fun setEpub(epub: EpubModel, position: Int) {
-            showCover(epub.cover.image)
+            showCover(epub.cover)
             showTitle(epub.title)
             showSeries(epub.series)
             showSeriesIndex(epub.seriesIndex)
@@ -78,14 +76,8 @@ class DocumentAdapter(
 
         }
 
-        private fun showCover(cover: String) {
-            if (cover.isEmpty()) {
-                TODO()
-            } else {
-                val coverBytes = Base64.decode(cover, Base64.DEFAULT)
-                val decodedImage = BitmapFactory.decodeByteArray(coverBytes, 0, coverBytes.size)
-                itemBinding.imageViewCover.setImageBitmap(decodedImage)
-            }
+        private fun showCover(coverModel: EpubModel.CoverModel?) {
+            coverModel?.bitmap?.run { itemBinding.imageViewCover.setImageBitmap(this) }
         }
 
         private fun showTitle(title: String) {

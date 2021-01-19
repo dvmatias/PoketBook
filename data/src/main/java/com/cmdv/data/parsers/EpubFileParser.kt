@@ -96,7 +96,7 @@ class EpubFileParser : FileParser {
             val coverManifestItem: EpubEntity.ManifestItemEntity? = getManifestItemById(metaItem.content)
             coverManifestItem?.let { manifestItem ->
                 return EpubEntity.CoverEntity(
-                    getCoverImageBase64(manifestItem.href, manifestItem.mediaType),
+                    getCoverImageBitmap(manifestItem.href, manifestItem.mediaType),
                     manifestItem.mediaType
                 )
             }
@@ -225,6 +225,28 @@ class EpubFileParser : FileParser {
         }
         inputStream?.let { } ?: Log.e(TAG, "Unable to find file in zip: $fileName")
         return inputStream
+    }
+
+    private fun getCoverImageBitmap(imageName: String, mediaType: String): Bitmap? {
+        val sanitizedImageName = imageName.substringBeforeLast(".").substringAfterLast("/")
+        val enumeration = zipFile.entries()
+        while (enumeration.hasMoreElements()) {
+            var coverFound = false
+            val entry = enumeration.nextElement()
+            val fileName = entry.name.substringAfterLast("/").substringBeforeLast(".")
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(entry.name)
+            val fileExtensionMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension)
+            fileExtensionMimeType?.let {
+                if (fileName == sanitizedImageName && it == mediaType) {
+                    val inputStream = zipFile.getInputStream(entry)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    coverFound = true
+                    return bitmap
+                }
+            }
+            if (coverFound) break
+        }
+        return null
     }
 
     private fun getCoverImageBase64(imageName: String, mediaType: String): String? {

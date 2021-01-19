@@ -1,5 +1,6 @@
 package com.cmdv.data.entity.epub
 
+import android.graphics.Bitmap
 import com.cmdv.data.entity.FileEntity
 import com.cmdv.domain.models.epub.TableOfContents
 import org.w3c.dom.Attr
@@ -12,7 +13,7 @@ data class EpubEntity(
     val tableOfContents: TableOfContents
 ) {
     data class CoverEntity(
-        val image: String?,
+        val image: Bitmap?,
         val mediaType: String?
     )
 

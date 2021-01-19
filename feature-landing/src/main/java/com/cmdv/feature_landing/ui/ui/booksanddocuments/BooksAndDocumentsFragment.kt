@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cmdv.core.Constants
 import com.cmdv.core.navigator.Navigator
 import com.cmdv.domain.models.DocumentModel
-import com.cmdv.domain.models.epub.EpubModel
 import com.cmdv.feature_landing.databinding.FragmentBooksAndDocumentsBinding
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -75,8 +75,10 @@ class BooksAndDocumentsFragment : Fragment() {
         override fun onDocumentClick(position: Int) {
             val document = documentAdapter.getItemByPosition(position)
             activity?.let {
-//                val bundle = Bundle().apply { putString("EXTRA_DOCUMENT", gson.toJson(document, EpubModel::class.java)) } TODO
-                navigator.toDocumentDetailActivity(it, null, null, false)
+                val bundle = Bundle().apply {
+                    putString(Constants.EXTRA_DOCUMENT_KEY, gson.toJson(document, document.javaClass))
+                }
+                navigator.toDocumentDetailActivity(it, bundle, null, false)
             }
         }
     }
