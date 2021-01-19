@@ -1,17 +1,42 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.4.21"
 
     ext {
-        room_version = '2.2.5'
-        // common libs
+        kotlin_version = "1.4.21"
+        ktx_version = "1.3.2"
+        appcompat_version = "1.2.0"
+        lifecycle_extensions = "2.2.0"
+        navigation_ktx = "2.3.2"
+        junit_version = "4.13"
+        ext_junit_version = "1.1.1"
+        espresso_version = "3.2.0"
+        room_version = "2.2.5"
+        koin_version = "2.1.3"
+        coroutines_core = "1.3.7"
+        coroutines_android = "1.3.3"
+        material = "1.2.1"
+
         libs = [
+                kotlin                      :('org.jetbrains.kotlin:kotlin-stdlib:' + kotlin_version),
+                ktx                         :('androidx.core:core-ktx:' + ktx_version),
+                appcompat                   :('androidx.appcompat:appcompat:' + appcompat_version),
+                lifecycle_extensions        :('androidx.lifecycle:lifecycle-extensions:' + lifecycle_extensions),
+                navigation_fragment_ktx     :('androidx.navigation:navigation-fragment-ktx:' + navigation_ktx),
+                navigation_ui_ktx           :('androidx.navigation:navigation-ui-ktx:' + navigation_ktx),
+                junit                       :('junit:junit:' + junit_version),
+                ext_junit                   :('androidx.test.ext:junit:' + ext_junit_version),
+                espresso                    :('androidx.test.espresso:espresso-core:' + espresso_version),
+                koin                        :('org.koin:koin-android:' + koin_version),
+                koin_scope                  :('org.koin:koin-android-scope:' + koin_version),
+                koin_view_model             :('org.koin:koin-android-viewmodel:' + koin_version),
                 room                        :('androidx.room:room-runtime:' + room_version),
                 room_annotation_processor   :('androidx.room:room-compiler:' + room_version),
-                room_ktx                    :('androidx.room:room-ktx:' + room_version)
+                room_ktx                    :('androidx.room:room-ktx:' + room_version),
+                coroutines_core             :('org.jetbrains.kotlinx:kotlinx-coroutines-core:' + coroutines_core),
+                coroutines_android          :('org.jetbrains.kotlinx:kotlinx-coroutines-android:' + coroutines_android),
+                material                    :('com.google.android.material:material:' + material)
         ]
     }
-
     repositories {
         google()
         jcenter()
@@ -20,8 +45,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:4.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.28-alpha'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath "org.koin:koin-gradle-plugin:$koin_version"
     }
 }
 

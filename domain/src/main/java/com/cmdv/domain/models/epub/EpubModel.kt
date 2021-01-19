@@ -14,7 +14,7 @@ data class EpubModel(
     val language: String,
     val series: String,
     val seriesIndex: String,
-    val format: String,
+    val format: String
 ) : DocumentModel() {
 
     data class CoverModel(
