@@ -21,7 +21,7 @@ class PocketBookApp : Application() {
         startKoin {
 //            androidLogger() TODO
             androidContext(this@PocketBookApp)
-            modules(appModule, repositoryModule, viewModelModule, providerModule)
+            modules(appModule, repositoryModule, viewModelModule, providerModule, librariesModule)
         }
     }
 

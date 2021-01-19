@@ -39,5 +39,7 @@ dependencies {
     implementation libs.room
     implementation libs.room_ktx
     implementation libs.room_annotation_processor
+    // Gson
+    implementation libs.gson
 
 }

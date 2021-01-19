@@ -1,6 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
 
 android {
     compileSdkVersion 29
@@ -31,10 +32,16 @@ android {
 }
 
 dependencies {
-    api project(path: ':data')
-    api project(path: ':domain')
+    api project(path: ':common-resources')
+    implementation project(path: ':core')
+    implementation project(path: ':components')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
 
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     // Testings
     testImplementation libs.junit
     androidTestImplementation libs.ext_junit
@@ -44,14 +51,4 @@ dependencies {
     implementation libs.ktx
     // Android
     implementation libs.appcompat
-    implementation libs.lifecycle_extensions
-    implementation libs.navigation_fragment_ktx
-    implementation libs.navigation_ui_ktx
-    // Koin
-    api libs.koin
-    api libs.koin_scope
-    api libs.koin_view_model
-    // Gson
-    api libs.gson
-
 }

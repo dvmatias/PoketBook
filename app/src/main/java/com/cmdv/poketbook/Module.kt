@@ -6,6 +6,7 @@ import com.cmdv.data.repositories.FileRepositoryImpl
 import com.cmdv.domain.providers.FilesProvider
 import com.cmdv.domain.repositories.FilesRepository
 import com.cmdv.feature_landing.ui.ui.booksanddocuments.BooksAndDocumentsViewModel
+import com.google.gson.Gson
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -24,6 +25,9 @@ val providerModule = module {
     single<FilesProvider> { FilesProviderImpl() }
 }
 
+val librariesModule = module {
+    single { Gson() }
+}
 
 //val dataSourceModule = module {
 //    single<AuthFirebaseSource> { AuthFirebaseSourceImpl() }

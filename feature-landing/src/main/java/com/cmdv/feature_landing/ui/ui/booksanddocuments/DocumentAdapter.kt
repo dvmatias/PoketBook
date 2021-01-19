@@ -19,7 +19,7 @@ import com.cmdv.feature_landing.databinding.DocumentItemViewBinding
 class DocumentAdapter(
     private val context: Context,
     private val listener: DocumentItemListener
-    ) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
+) : RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder>() {
 
     private val documents = arrayListOf<DocumentModel>()
 
@@ -80,7 +80,7 @@ class DocumentAdapter(
 
         private fun showCover(cover: String) {
             if (cover.isEmpty()) {
-                // TODO display "no-cover" image
+                TODO()
             } else {
                 val coverBytes = Base64.decode(cover, Base64.DEFAULT)
                 val decodedImage = BitmapFactory.decodeByteArray(coverBytes, 0, coverBytes.size)

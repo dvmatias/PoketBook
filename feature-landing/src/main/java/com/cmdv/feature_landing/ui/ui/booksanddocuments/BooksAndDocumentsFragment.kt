@@ -5,17 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import org.koin.android.viewmodel.ext.android.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cmdv.core.navigator.Navigator
 import com.cmdv.domain.models.DocumentModel
+import com.cmdv.domain.models.epub.EpubModel
 import com.cmdv.feature_landing.databinding.FragmentBooksAndDocumentsBinding
+import com.google.gson.Gson
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class BooksAndDocumentsFragment : Fragment() {
 
     private val viewModel: BooksAndDocumentsViewModel by viewModel()
-    private var _binding: FragmentBooksAndDocumentsBinding? = null
     private val binding get() = _binding!!
+    private var _binding: FragmentBooksAndDocumentsBinding? = null
     private lateinit var documentAdapter: DocumentAdapter
+    private val navigator: Navigator by inject()
+    private val gson: Gson by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +74,10 @@ class BooksAndDocumentsFragment : Fragment() {
     private val documentItemListener = object : DocumentAdapter.DocumentItemListener {
         override fun onDocumentClick(position: Int) {
             val document = documentAdapter.getItemByPosition(position)
-
+            activity?.let {
+//                val bundle = Bundle().apply { putString("EXTRA_DOCUMENT", gson.toJson(document, EpubModel::class.java)) } TODO
+                navigator.toDocumentDetailActivity(it, null, null, false)
+            }
         }
     }
 
