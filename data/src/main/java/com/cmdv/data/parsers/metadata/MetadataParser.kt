@@ -55,9 +55,11 @@ class MetadataParser {
     private fun setMetaElements(metadataNodes: NodeList) {
         for (i in 0 until metadataNodes.length) {
             try {
-                with(metadataNodes.item(i) as Element) {
-                    if (tagName == META_ELEMENT) {
-                        metaElements.add(EpubEntity.MetadataEntity.MetaItemEntity(getAttribute(META_CONTENT), getAttribute(META_NAME)))
+                if (metadataNodes.item(i) is Element) {
+                    with(metadataNodes.item(i) as Element) {
+                        if (tagName == META_ELEMENT) {
+                            metaElements.add(EpubEntity.MetadataEntity.MetaItemEntity(getAttribute(META_CONTENT), getAttribute(META_NAME)))
+                        }
                     }
                 }
             } catch (e: Exception) {

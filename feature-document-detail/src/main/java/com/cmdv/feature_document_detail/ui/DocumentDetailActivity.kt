@@ -2,6 +2,7 @@ package com.cmdv.feature_document_detail.ui
 
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
@@ -13,12 +14,10 @@ import com.cmdv.domain.models.epub.EpubModel
 import com.cmdv.domain.models.pdf.PdfModel
 import com.cmdv.feature_document_detail.R
 import com.cmdv.feature_document_detail.databinding.ActivityDocumentDetailBinding
-import com.cmdv.feature_document_detail.ui.fragments.EpubDetailFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
-import java.lang.IllegalStateException
 
 class DocumentDetailActivity : AppCompatActivity() {
 
@@ -40,6 +39,14 @@ class DocumentDetailActivity : AppCompatActivity() {
         getExtras()
         setNavigation()
         showDocument()
+
+        // This callback will only be called when MyFragment is at least Started.
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true /* enabled by default */) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)

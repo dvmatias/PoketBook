@@ -25,11 +25,7 @@ class BooksAndDocumentsFragment : Fragment() {
     private val navigator: Navigator by inject()
     private val gson: Gson by inject()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentBooksAndDocumentsBinding.inflate(inflater, container, false)
         val view = binding.root
 
